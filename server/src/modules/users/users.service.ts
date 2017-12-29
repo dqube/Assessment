@@ -24,7 +24,7 @@ export class UsersService {
   async findById(id: string): Promise<User | null> {
     let user = await this.UserModel.findById(id).exec();
     if (user) {
-      user = user.schema.methods.serialize(user);
+      user = await this.serializeUser(user);
     }
     return user;
   }
@@ -33,7 +33,7 @@ export class UsersService {
     let user = await this.UserModel.findOne(options, fields).exec();
 
     if (user) {
-      user = user.schema.methods.serialize(user);
+      user = await this.serializeUser(user);
     }
 
     return user;
@@ -46,5 +46,18 @@ export class UsersService {
 
   async delete(id: number): Promise<User | null> {
     return await this.UserModel.findByIdAndRemove(id).exec();
+  }
+  async serializeUser(user:any):Promise<any>{
+    return {
+      id: user._id,
+    name: user.name,
+    age: user.age,
+    username: user.username,
+    password: user.password,
+    email: user.email,
+    admin: user.admin,
+    created_at: user.created_at,
+    updated_at: user.updated_at
+    }
   }
 }

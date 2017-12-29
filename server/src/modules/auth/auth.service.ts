@@ -1,5 +1,4 @@
 import { Component, HttpStatus, HttpException } from '@nestjs/common';
-import { Model } from 'mongoose';
 import * as jwt from 'jsonwebtoken';
 
 import { UsersService } from './../users/users.service';
@@ -30,22 +29,46 @@ export class AuthService {
   }
 
   /**
-   * Signs the user to the application
+   * Signs the user to the application by generating JWT tokens
    * 
    * @param credentials - The user credentials
-   * @returns tokens - The access and the refresh token to authenticate the user 
+   * @returns data - The access and the refresh token to authenticate the user and the user
    */
-  async sign(credentials: { email: string, password: string }): Promise<any[]> {
+  async sign(credentials: { email: string, password: string }): Promise<any> {
 
-    const user = await this.usersService.findOne({ email: credentials.email} );
+    const user = await this.usersService.findOne({ email: credentials.email});
     if (!user) throw new HttpException('The specified user does not exists', HttpStatus.BAD_REQUEST);
 
+    const serializedUser = await this.serializeUser(user);
     const isValid = await this.checkUserPassword(user, credentials.password);
-    if (!isValid) throw new HttpException('The email/password combination is invalid', HttpStatus.BAD_REQUEST);   
+    if (!isValid) throw new HttpException('The email/password combinaison is invalid', HttpStatus.BAD_REQUEST);   
 
-    const tokens = await this.jwtService.createToken(user);
+    const tokens = await this.jwtService.generateToken(serializedUser);
 
-    return tokens;
+    return { tokens, user: serializedUser };
+
+  }
+  
+  /**
+   * Generating new JWT tokens to keep the user authenticated
+   * 
+   * @param token
+   * @returns data - The new access and the refresh token to authenticate the user and the user
+   */
+  async refreshToken(token: string): Promise<any> {
+    const user: User = await this.jwtService.verify(token);
+
+    const serializedUser = await this.serializeUser(user);
+    const tokens = await this.jwtService.generateToken(serializedUser);
     
+    return { tokens, user: serializedUser };
+  }
+
+  async serializeUser(user:any):Promise<any>{
+    return {
+      id: user._id,
+      username: user.username,
+      email: user.email
+    }
   }
 }

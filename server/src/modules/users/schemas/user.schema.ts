@@ -51,4 +51,11 @@ userschema.methods.serialize = function (user) {
     updated_at: user.updated_at
   }
 };
+userschema.methods.serialised = function(user) {
+  return {
+    id: user._id,
+    username: user.username,
+    email: user.email
+  }
+};
 export const UserSchema = userschema;
