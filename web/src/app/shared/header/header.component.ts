@@ -12,16 +12,15 @@ import { User } from '../../auth/shared/services/auth.service';
         <button mat-icon-button (click)="toggleSidenav()">
           <mat-icon>menu</mat-icon>
         </button>
-
-        <mat-icon>whatshot</mat-icon>
-        <span class="app-title">Angular Admin</span>
+        <div class="brand" [class.expanded]="toggled">
+          <mat-icon>whatshot</mat-icon>
+          <span class="app-title">Movie Manager</span>
+        </div>
         <span class="space"></span>
-
         <div>
           <button mat-icon-button matTooltip="Account" [mat-menu-trigger-for]="userMenu" tabindex="-1">
             <mat-icon>account_circle</mat-icon>
           </button>
-
           <mat-menu #userMenu="matMenu">
             <button
               mat-menu-item
@@ -31,14 +30,13 @@ import { User } from '../../auth/shared/services/auth.service';
             </button>
           </mat-menu>
         </div>
-
       </mat-toolbar-row>
     </mat-toolbar>
   `
 })
 export class HeaderComponent {
 
-  toggled = false;
+  toggled = true;
 
   @Input()
   user: User;

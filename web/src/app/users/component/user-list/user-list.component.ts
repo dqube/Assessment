@@ -97,6 +97,6 @@ export class UserListComponent {
   }
 
   getRoute(user: any) {
-    return [user._id];
+    return [user.userid];
   }
 }
