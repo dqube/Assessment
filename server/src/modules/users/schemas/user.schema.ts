@@ -40,7 +40,7 @@ userschema.set('toJSON', {
 
 userschema.methods.serialize = function (user) {
   return {
-    id: user._id,
+    userid: user._id,
     name: user.name,
     age: user.age,
     username: user.username,
